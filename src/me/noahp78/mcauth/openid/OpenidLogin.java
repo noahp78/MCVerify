@@ -1,6 +1,9 @@
 package me.noahp78.mcauth.openid;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Random;
 import java.util.UUID;
@@ -39,6 +42,25 @@ public class OpenidLogin extends HttpServlet {
 		if(request.getParameterMap().containsKey("redirect_uri") && request.getParameterMap().containsKey("client_id")
 			&& request.getParameterMap().containsKey("scope")){
 			String return_url = request.getParameter("redirect_uri");
+			//Check if url is really a URL
+			try {
+				URL u = new URL(return_url); // this would check for the protocol
+			
+				URI uri = u.toURI();
+			} catch (Exception e) {
+				System.out.println("Got invalid request!");
+				request.setAttribute("error", "Invalid Return Url, Please contact the website administrator that linked you here.");
+				
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				request.getRequestDispatcher("/error.jsp").forward(request, response);
+				//TODO a nice error page?
+				return;
+			} // does the extra checking required for validation of URI 
+			
+			
+			
+			
 			//String token = request.getParameter("client_id");
 			//String scope = request.getParameter("scope");
 			
@@ -68,6 +90,11 @@ public class OpenidLogin extends HttpServlet {
 			
 		}else{
 			System.out.println("ERROR STARTING AUTH_FLOW. NOT ALL PARAMETERS PRESENT");
+			request.setAttribute("error", "Not all parameters are present, Please contact the website administrator that linked you here.");
+			
+			// TODO Auto-generated catch block
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+			//TODO a nice error page?
 			return;
 		}
 	}
