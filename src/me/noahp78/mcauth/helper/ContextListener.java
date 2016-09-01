@@ -9,6 +9,7 @@ import java.util.Scanner;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
+import me.noahp78.mcauth.DonatorCustomization;
 import me.noahp78.mcauth.mc.McServerFacade;
 
 
@@ -27,6 +28,7 @@ public class ContextListener implements javax.servlet.ServletContextListener {
 				words.add(word);
 			}
 			System.out.println("Read " + words.size() + " words");
+			DonatorCustomization.Load();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

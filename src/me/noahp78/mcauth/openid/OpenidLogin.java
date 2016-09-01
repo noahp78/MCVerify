@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import me.noahp78.mcauth.DonatorCustomization;
 import me.noahp78.mcauth.helper.ContextListener;
 import me.noahp78.mcauth.mc.McServerFacade;
 
@@ -36,41 +37,74 @@ public class OpenidLogin extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		
-		
+		//We require redirect_uri, client_id and scope to be prepared for a possible Full OpenID implementation
 		if(request.getParameterMap().containsKey("redirect_uri") && request.getParameterMap().containsKey("client_id")
 			&& request.getParameterMap().containsKey("scope")){
 			String return_url = request.getParameter("redirect_uri");
 			//Check if url is really a URL
+			
+			
+			
 			try {
 				URL u = new URL(return_url); // this would check for the protocol
 			
 				URI uri = u.toURI();
 			} catch (Exception e) {
 				System.out.println("Got invalid request!");
+				String error_msg =e.getMessage();
+				System.out.println(error_msg);
+				String error_name = e.getMessage().split(":")[0];
 				request.setAttribute("error", "Invalid Return Url, Please contact the website administrator that linked you here.");
+				request.setAttribute("error_detail", error_name);
 				
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				/* There is no reason to report this error since we handled it with the customer
+				 * e.printStackTrace();
+				 */
 				request.getRequestDispatcher("/error.jsp").forward(request, response);
-				//TODO a nice error page?
+				
 				return;
-			} // does the extra checking required for validation of URI 
+			} 
+			String hostname_suffix = ".verfiy.mcverify.ga";
+			if(request.getParameterMap().containsKey("donator")){
+				String donator_code = request.getParameter("donator");
+				if(DonatorCustomization.h.containsKey(donator_code)){
+					DonatorCustomization.Donator d = DonatorCustomization.h.get(donator_code);
+					if(!d.isUrlAllowed(return_url)){
+						request.setAttribute("error", "Return path doesn't match Donator Specification");
+						request.setAttribute("error_detail", "Return path: " + return_url.replaceAll("\\<.*?>","") + "Doesn't match any donator specification");
+						request.getRequestDispatcher("/error.jsp").forward(request, response);
+						return;
+					}
+					if(d.image!=null){
+						request.setAttribute("image", d.image);
+					}
+					hostname_suffix = d.custom_suffix;
+				}else{
+					request.setAttribute("error", "Invalid Donator Key, Please contact the website administrator that linked you here.");
+					request.setAttribute("error_detail", "Donator key was invalid. Or not yet deployed");
+					
+					/* There is no reason to report this error since we handled it with the customer
+					 * e.printStackTrace();
+					 */
+					request.getRequestDispatcher("/error.jsp").forward(request, response);
+					return;
+				}
+				
+				
+				
+				
+				
+			}
 			
-			
-			
-			
-			//String token = request.getParameter("client_id");
-			//String scope = request.getParameter("scope");
 			
 			int index = new Random().nextInt(ContextListener.words.size());
 	        String prefix = ContextListener.words.get(index);
 	        String hostname = "";
-	        if(McServerFacade.hostname_token.containsKey((prefix+".verify.mcverify.ga"))){
-	        	hostname = randomString(6) + ".verify.mcverify.ga";
+	        if(McServerFacade.hostname_token.containsKey((prefix+hostname_suffix))){
+	        	hostname = randomString(6) + hostname_suffix;
 	        }else{
-	        	hostname =prefix+".verify.mcverify.ga";
+	        	hostname =prefix+hostname_suffix;
 				
 	        }
 			//String prefix = ContextListener.words.get((int) (Math.random() * ContextListener.words.size()));

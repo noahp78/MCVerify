@@ -38,7 +38,8 @@
    <div class="container">    
    	<div class="jumbotron">
     <h1>Something terrible happend!</h1> 
-    <p><%= request.getAttribute("error") %></p> 
+    <p><%= request.getAttribute("error") %></p>
+    <small><%=request.getAttribute("error_detail") %></small> 
   </div>
    
    </div>

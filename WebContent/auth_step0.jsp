@@ -53,8 +53,14 @@
             <div class="panel-heading">
                 <div class="panel-title text-center">Verify Minecraft Account</div>
             </div>     
-
+			
             <div class="panel-body" >
+				<%
+				if(request.getAttribute("image")!=null){
+					out.print("<img class=\"img-responsive center-block\" height=200 src=\"" + request.getAttribute("image") + "\">");
+					out.print("<hr>");	
+				}
+				%>
 				<h1><small>Its easy. just connect to </small><br>
 				<b id="ip"><%=request.getAttribute("verify_ip")%></b><br><small>in your minecraft client!</small> 
 				
