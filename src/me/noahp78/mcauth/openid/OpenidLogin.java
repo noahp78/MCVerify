@@ -65,7 +65,7 @@ public class OpenidLogin extends HttpServlet {
 				
 				return;
 			} 
-			String hostname_suffix = ".verfiy.mcverify.ga";
+			String hostname_suffix = ".verify.mcverify.ga";
 			if(request.getParameterMap().containsKey("donator")){
 				String donator_code = request.getParameter("donator");
 				if(DonatorCustomization.h.containsKey(donator_code)){

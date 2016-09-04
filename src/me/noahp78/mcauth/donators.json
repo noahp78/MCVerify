@@ -2,6 +2,6 @@
   "demo": {
     "allowed_return_urls": "http://mcverify.ga/demo.php,https://mcverify.ga/demo.php",
     "custom_suffix": ".demo.verify.mcverify.ga",
-    "image": "http://cravatar.eu/head/noahp78/128.png"
+    "image": "https://playsuburbia.azureedge.net/img/brand/block.png"
   }
 }
