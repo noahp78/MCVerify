@@ -45,7 +45,13 @@ public class pollServlet extends HttpServlet {
 					PersistantData.get().data_keys.put(OpenidLogin.getProfileTicket(request), McServerFacade.authenticated_users.get(token));
 					System.out.println("Upgraded " + OpenidLogin.getProfileTicket(request) + " with MCUserData");
 					if(request.getParameterMap().containsKey("json")){
-						response.getWriter().append(new Gson().toJson(McServerFacade.authenticated_users.get(token).username));
+						response.getWriter().append(new Gson().toJson(McServerFacade.authenticated_users.get(token)));
+					}else{
+						response.getWriter().append(McServerFacade.authenticated_users.get(token).username);
+					}
+				}else{
+					if(request.getParameterMap().containsKey("json")){
+						response.getWriter().append(new Gson().toJson(McServerFacade.authenticated_users.get(token)));
 					}else{
 						response.getWriter().append(McServerFacade.authenticated_users.get(token).username);
 					}

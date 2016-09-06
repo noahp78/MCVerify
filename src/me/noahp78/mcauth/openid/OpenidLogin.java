@@ -36,11 +36,13 @@ public class OpenidLogin extends HttpServlet {
     }
 
     public static String getProfileTicket(HttpServletRequest request){
+    	if(request.getCookies()!=null){
 		for(Cookie c : request.getCookies()){
 			if(c.getName().equalsIgnoreCase("request_key")){
 				return c.getValue();
 			}
 		}
+    	}
     	return null;
     	
     }
@@ -70,7 +72,7 @@ public class OpenidLogin extends HttpServlet {
 				if(pollServlet.DEBUG_MODE){
 					c.setDomain("localhost");
 				}else{
-					c.setDomain("*.mcverify.ga");
+					c.setDomain(".mcverify.ga");
 				}
 				c.setPath("/");
 				c.setVersion(1);
