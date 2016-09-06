@@ -63,7 +63,7 @@ public class OpenidLogin extends HttpServlet {
 					MCUserData data = PersistantData.get().data_keys.get(ticket);
 					UUID u = UUID.randomUUID();
 					McServerFacade.authenticated_users.put(u.toString(), data);
-					response.sendRedirect(response.encodeRedirectUrl(return_url + "?token=" + u.toString() + "&FastLogin"));
+					response.sendRedirect(response.encodeRedirectUrl(return_url + "?code=" + u.toString() + "&FastLogin"));
 					return;
 				}
 			}
