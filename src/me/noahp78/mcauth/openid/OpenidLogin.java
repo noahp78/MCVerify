@@ -2,7 +2,6 @@ package me.noahp78.mcauth.openid;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.Random;
@@ -10,12 +9,15 @@ import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import me.noahp78.mcauth.DonatorCustomization;
+import me.noahp78.mcauth.PersistantData;
 import me.noahp78.mcauth.helper.ContextListener;
+import me.noahp78.mcauth.mc.MCUserData;
 import me.noahp78.mcauth.mc.McServerFacade;
 
 /**
@@ -33,6 +35,15 @@ public class OpenidLogin extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 
+    public static String getProfileTicket(HttpServletRequest request){
+		for(Cookie c : request.getCookies()){
+			if(c.getName().equalsIgnoreCase("request_key")){
+				return c.getValue();
+			}
+		}
+    	return null;
+    	
+    }
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -43,6 +54,28 @@ public class OpenidLogin extends HttpServlet {
 			&& request.getParameterMap().containsKey("scope")){
 			String return_url = request.getParameter("redirect_uri");
 			//Check if url is really a URL
+			if(getProfileTicket(request)!=null){
+				String ticket = getProfileTicket(request);
+				//Check if we have a ticket that has Authentication Information and service doesn't force user auth.
+				if(PersistantData.get().data_keys.get(ticket)!=null && !request.getParameterMap().containsKey("nofastlogin")){
+					MCUserData data = PersistantData.get().data_keys.get(ticket);
+					UUID u = UUID.randomUUID();
+					McServerFacade.authenticated_users.put(u.toString(), data);
+					response.sendRedirect(response.encodeRedirectUrl(return_url + "?token=" + u.toString() + "&FastLogin"));
+					return;
+				}
+			}
+				String request_key = UUID.randomUUID().toString();
+				Cookie c =new Cookie("request_key", request_key);
+				if(pollServlet.DEBUG_MODE){
+					c.setDomain("localhost");
+				}else{
+					c.setDomain("*.mcverify.ga");
+				}
+				c.setPath("/");
+				c.setVersion(1);
+				c.setMaxAge(3600*12);
+				response.addCookie(c);
 			
 			
 			

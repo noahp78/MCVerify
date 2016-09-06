@@ -11,7 +11,7 @@
     <meta name="description" content="Verify your Minecraft Account With Ease!">
     <meta name="author" content="noahp78">
 
-    <title>MCVerify - Enter your username</title>
+    <title>MCVerify - Error</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">

@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+
+import me.noahp78.mcauth.PersistantData;
+import me.noahp78.mcauth.mc.MCUserData;
 import me.noahp78.mcauth.mc.McServerFacade;
 
 /**
@@ -16,6 +20,8 @@ import me.noahp78.mcauth.mc.McServerFacade;
 public class pollServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
+	public static final boolean DEBUG_MODE = false;
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -23,7 +29,8 @@ public class pollServlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -33,14 +40,29 @@ public class pollServlet extends HttpServlet {
 		if(request.getParameterMap().containsKey("token")){
 			String token = request.getParameter("token");
 			if(McServerFacade.authenticated_users.containsKey(token)){
-				response.getWriter().append(McServerFacade.authenticated_users.get(token).username);
+				//FAST LOGIN NEXT TIME
+				if(OpenidLogin.getProfileTicket(request)!=null){
+					PersistantData.get().data_keys.put(OpenidLogin.getProfileTicket(request), McServerFacade.authenticated_users.get(token));
+					System.out.println("Upgraded " + OpenidLogin.getProfileTicket(request) + " with MCUserData");
+					if(request.getParameterMap().containsKey("json")){
+						response.getWriter().append(new Gson().toJson(McServerFacade.authenticated_users.get(token).username));
+					}else{
+						response.getWriter().append(McServerFacade.authenticated_users.get(token).username);
+					}
+				}
+					
+			}else if(DEBUG_MODE){
+				MCUserData d = new MCUserData();
+				d.username="test";
+				d.uuid="test";
+				McServerFacade.authenticated_users.put(token, d);
 			}else{
 				response.sendError(403);
 			}
-			
-		}else{
+			}else{
 			response.getWriter().append("INVALID REQUEST");
 		}
+		
 	}
 
 	/**
