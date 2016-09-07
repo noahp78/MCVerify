@@ -72,7 +72,7 @@
 				}
 				%>
 				<h1><small>Its easy. just connect to </small><br>
-				<b id="ip"><%=request.getAttribute("verify_ip")%></b><br><small>in your minecraft client!</small> 
+				<b id="ip"><%=request.getAttribute("verify_ip")%></b><br><small>in your Minecraft client!</small> 
 				
 				<br></h1>
 				<p id="status">Waiting on javascript polling</p>  
@@ -344,7 +344,7 @@
 				var redirect_url = "<%=request.getAttribute("return_url")%>";
 				var redirecting =false;
 				setInterval(check_auth_success, 1000);
-				  $( "#status" ).html("Waiting on your minecraft...");
+				  $( "#status" ).html("Waiting on your Minecraft...");
 					
 				
 				function check_auth_success(){
