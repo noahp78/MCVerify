@@ -60,12 +60,17 @@ public class OpenidLogin extends HttpServlet {
 				String ticket = getProfileTicket(request);
 				//Check if we have a ticket that has Authentication Information and service doesn't force user auth.
 				if(PersistantData.get().data_keys.get(ticket)!=null && !request.getParameterMap().containsKey("nofastlogin")){
-					MCUserData data = PersistantData.get().data_keys.get(ticket);
-					UUID u = UUID.randomUUID();
-					McServerFacade.authenticated_users.put(u.toString(), data);
-					response.sendRedirect(response.encodeRedirectUrl(return_url + "?code=" + u.toString() + "&FastLogin"));
-					return;
-				}
+					String hostname = PersistantData.get().data_keys.get(ticket);
+					if(McServerFacade.authenticated_users.get(McServerFacade.hostname_token.get(hostname))!=null){
+						MCUserData data = McServerFacade.authenticated_users.get(McServerFacade.hostname_token.get(hostname));
+						if(data!=null){
+							UUID u = UUID.randomUUID();
+							McServerFacade.authenticated_users.put(u.toString(), data);
+							response.sendRedirect(response.encodeRedirectUrl(return_url + "?code=" + u.toString() + "&FastLogin"));
+							return;
+						}
+					}
+				}	
 			}
 				String request_key = UUID.randomUUID().toString();
 				Cookie c =new Cookie("request_key", request_key);
@@ -142,6 +147,7 @@ public class OpenidLogin extends HttpServlet {
 	        	hostname =prefix+hostname_suffix;
 				
 	        }
+	        PersistantData.get().data_keys.put(request_key, hostname);
 			//String prefix = ContextListener.words.get((int) (Math.random() * ContextListener.words.size()));
 			//prefix = new BigInteger(130, new SecureRandom()).toString(4);
 			request.setAttribute("verify_ip", hostname);

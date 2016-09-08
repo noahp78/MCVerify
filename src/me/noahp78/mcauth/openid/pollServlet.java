@@ -42,8 +42,6 @@ public class pollServlet extends HttpServlet {
 			if(McServerFacade.authenticated_users.containsKey(token)){
 				//FAST LOGIN NEXT TIME
 				if(OpenidLogin.getProfileTicket(request)!=null){
-					PersistantData.get().data_keys.put(OpenidLogin.getProfileTicket(request), McServerFacade.authenticated_users.get(token));
-					System.out.println("Upgraded " + OpenidLogin.getProfileTicket(request) + " with MCUserData");
 					if(request.getParameterMap().containsKey("json")){
 						response.getWriter().append(new Gson().toJson(McServerFacade.authenticated_users.get(token)));
 					}else{

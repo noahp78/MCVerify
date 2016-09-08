@@ -16,7 +16,10 @@ public class PersistantData {
 			return i;
 		}
 	}
-	public HashMap<String, MCUserData> data_keys = new HashMap<String,MCUserData>();
+	/**
+	 * Return the hostname used to auth
+	 */
+	public HashMap<String, String> data_keys = new HashMap<String,String>();
 	
 	
 }
